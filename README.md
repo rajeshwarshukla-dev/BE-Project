@@ -89,3 +89,60 @@ Milestone Started
 Quality checked
 Complete
 
+
+------------------------------
+Final Category (Measure) =
+VAR _Status =
+    SELECTEDVALUE ( 'TableName'[Status] )
+RETURN
+SWITCH (
+    TRUE(),
+
+    _Status IN {
+        "Not Committed",
+        "Not Ready",
+        "Forced Ready",
+        "Stopped"
+    }, "Not Ready / Risk",
+
+    _Status IN {
+        "Warning",
+        "Started",
+        "Milestone Started"
+    }, "In Progress / Attention",
+
+    _Status IN {
+        "Quality checked",
+        "Complete"
+    }, "Completed / Done",
+
+    BLANK()
+)
+--------------------------------------------
+Final Status Color =
+VAR _Status =
+    SELECTEDVALUE ( 'TableName'[Status] )
+RETURN
+SWITCH (
+    TRUE(),
+
+    _Status IN {
+        "Not Committed",
+        "Not Ready",
+        "Forced Ready",
+        "Stopped"
+    }, "#D93025",        -- Red
+
+    _Status IN {
+        "Warning",
+        "Started",
+        "Milestone Started"
+    }, "#FBBC04",        -- Amber
+
+    _Status IN {
+        "Quality checked",
+        "Complete"
+    }, "#34A853",        -- Green
+
+    "#D3D3D3"            -- Default / fallback
+)
