@@ -77,3 +77,15 @@ DATATABLE (
         {"Facade", 5}
     }
 )
+
+_______________________________________
+Not Committed
+Not Ready
+Forced Ready
+Stopped
+Warning
+Started
+Milestone Started
+Quality checked
+Complete
+
