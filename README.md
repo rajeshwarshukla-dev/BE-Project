@@ -37,3 +37,17 @@ SWITCH (
 ) //🟡, "🔴Not Completed", "🟢Completed On Time", "🔴Delayed"
 
 
+
+
+________________________________________________________________
+🏠 Home
+🗃️ Portfolio Overview
+🏅 Quality Report
+🛡️ Safety Report
+💰 Cost Performance
+📋 Schedule Performance
+⏳ Current Work Progress
+⏳ Schedule Days
+⏳ Procurement Schedule
+![Uploading image.png…]()
+
