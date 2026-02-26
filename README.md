@@ -1,148 +1,47 @@
-Phase = 
-VAR SubCat = 'Sheet1'[Sub-Category]
+Period Table =
+VAR StartDate = DATE(2023, 6, 1)
+VAR EndDate   = DATE(2028, 7, 1)
 RETURN
-SWITCH (
-    TRUE(),
+ADDCOLUMNS (
+    CALENDAR ( StartDate, EndDate ),
+    
+    /* Keep only first day of each month */
+    "PeriodStart", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ),
 
-    /* RCC – Sub structure */
-    SubCat IN {
-        "Lift Pit RCC Works",
-        "Raft RCC Works",
-        "Retaining Wall RCC Works",
-        "Foundation RCC Works",
-        "Staircase & Ramp RCC Works"
-    }, "RCC - Sub structure",
+    "PeriodEnd", EOMONTH ( [Date], 0 ),
 
-    /* RCC – Super structure */
-    SubCat IN {
-        "Core Wall RCC Works",
-        "RCC Works - Vertical",
-        "RCC Works - Slab"
-    }, "RCC - Super structure",
+    "PeriodLabel",
+        UPPER ( FORMAT ( [Date], "MMM" ) )
+            & "'"
+            & RIGHT ( FORMAT ( [Date], "YY" ), 2 ),
 
-    /* MEP 1st Fix */
-    SubCat IN {
-        "FPS 1st Fix - MEP & Finishes",
-        "Electrical 1st Fixes",
-        "HVAC Ducting",
-        "Plumbing"
-    }, "MEP 1st Fix",
-
-    /* Facade */
-    SubCat = "Façade Works", "Facade",
-
-    /* Finishes (default bucket) */
-    SubCat IN {
-        "Gypsum Plastering Works",
-        "Blockwork",
-        "Painting Works",
-        "Ceiling Painting/ PT Marking",
-        "Flooring & Dado",
-        "False Ceiling",
-        "Door & Window Frame work",
-        "Lobby Plastering",
-        "Final Painting",
-        "Staircase Flooring",
-        "Door & Window Fixing",
-        "Electrical",
-        "FPS 2nd Fix - MEP & Finishes",
-        "Electrical 2nd Fix - MEP & Finishes",
-        "FPS final fixes",
-        "HVAC Grill Fixing"
-    }, "Finishes",
-
-    /* Safety fallback */
-    "Unmapped"
+    "SortOrder",
+        YEAR ( [Date] ) * 100 + MONTH ( [Date] )
 )
-_________________________________________________________________________________________
-Phase_Order = 
-SWITCH (
-    'Sheet1'[Phase],
-    "RCC - Sub structure", 1,
-    "RCC - Super structure", 2,
-    "MEP 1st Fix", 3,
-    "Finishes", 4,
-    "Facade", 5
-)
-_________________________________________________________________________________________
-Phase_Order = 
-DATATABLE (
-    "Phase", STRING,
-    "Phase_Order", INTEGER,
-    {
-        {"RCC - Sub structure", 1},
-        {"RCC - Super structure", 2},
-        {"MEP 1st Fix", 3},
-        {"Finishes", 4},
-        {"Facade", 5}
-    }
-)
-
-_______________________________________
-Not Committed
-Not Ready
-Forced Ready
-Stopped
-Warning
-Started
-Milestone Started
-Quality checked
-Complete
 
 
 ------------------------------
-Final Category (Measure) =
-VAR _Status =
-    SELECTEDVALUE ( 'TableName'[Status] )
+
+Period Table =
+VAR StartDate = DATE(2023, 6, 1)
+VAR EndDate   = DATE(2028, 7, 1)
 RETURN
-SWITCH (
-    TRUE(),
+ADDCOLUMNS (
+    SUMMARIZE (
+        CALENDAR ( StartDate, EndDate ),
+        YEAR ( [Date] ),
+        MONTH ( [Date] )
+    ),
 
-    _Status IN {
-        "Not Committed",
-        "Not Ready",
-        "Forced Ready",
-        "Stopped"
-    }, "Not Ready / Risk",
+    "PeriodStart", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ),
 
-    _Status IN {
-        "Warning",
-        "Started",
-        "Milestone Started"
-    }, "In Progress / Attention",
+    "PeriodEnd", EOMONTH ( DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ), 0 ),
 
-    _Status IN {
-        "Quality checked",
-        "Complete"
-    }, "Completed / Done",
+    "PeriodLabel",
+        UPPER ( FORMAT ( DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ), "MMM" ) )
+            & "'"
+            & RIGHT ( FORMAT ( DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ), "YY" ), 2 ),
 
-    BLANK()
-)
---------------------------------------------
-Final Status Color =
-VAR _Status =
-    SELECTEDVALUE ( 'TableName'[Status] )
-RETURN
-SWITCH (
-    TRUE(),
-
-    _Status IN {
-        "Not Committed",
-        "Not Ready",
-        "Forced Ready",
-        "Stopped"
-    }, "#D93025",        -- Red
-
-    _Status IN {
-        "Warning",
-        "Started",
-        "Milestone Started"
-    }, "#FBBC04",        -- Amber
-
-    _Status IN {
-        "Quality checked",
-        "Complete"
-    }, "#34A853",        -- Green
-
-    "#D3D3D3"            -- Default / fallback
+    "SortOrder",
+        YEAR ( [Date] ) * 100 + MONTH ( [Date] )
 )
